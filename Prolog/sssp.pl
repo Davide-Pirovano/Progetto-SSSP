@@ -155,7 +155,37 @@ insert(H, K, V) :-
     change_size(H, 1),
     assert(heap_entry(H, 1, K, V)), !.
 
-% casi insert in cui H non sia empty da aggiungere
+insert(H, K, V) :-
+    heap(H, _),
+    heap_size(H, Size),
+    NewSize is Size + 1,
+    father(PF, NewSize),
+    heap_entry(H, PF, KF, _),
+    KF =< K,
+    change_size(H, 1),
+    assert(heap_entry(H, NewSize, K, V)), !.
+
+insert(H, K, V) :-
+    heap(H, _),
+    change_size(H, 1),
+    heap_size(H, Size),
+    assert(heap_entry(H, Size, K, V)),
+    go_up(H, Size), !.
+
+
+go_up(_, 1) :- !.
+
+go_up(H, PC) :-
+    heap_entry(H, PC, KC, _),
+    father(PF, PC),
+    heap_entry(H, PF, KF, _),
+    KF =< KC, !.
+
+go_up(H, PC) :-
+    heap_entry(H, PC, _, _),
+    father(PF, PC),
+    swap(H, PF, PC),
+    go_up(H, PF), !.
 
 extract(H, _, _) :-
     heap(H, _),
@@ -177,3 +207,17 @@ list_heap(H) :-
     heap_size(H, Size),
     ordering(H, Size),
     listing(heap_entry(H, _, _, _)), !.
+
+ordering(_, 0) :- !.
+
+ordering(H, Size) :-
+    retract(heap_entry(H, Size, K, V)),
+    asserta(heap_entry(H, Size, K, V)),
+    S is Size - 1,
+    ordering(H, S), !.
+
+swap(H, PF, PC) :-
+    retract(heap_entry(H, PF, KF, VF)),
+    retract(heap_entry(H, PC, KC, VC)),
+    assert(heap_entry(H, PF, KC, VC)),
+    assert(heap_entry(H, PC, KF, VF)).
