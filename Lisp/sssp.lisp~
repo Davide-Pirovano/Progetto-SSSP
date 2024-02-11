@@ -1,0 +1,91 @@
+; -*- Mode: Common Lisp -*-
+; sssp.lisp
+
+
+;---------;---------;---------;---------;---------;---------;---------;
+; SINGLE SOURCE SHORTEST PATH ;
+
+
+; progetto a cura di:
+
+; Bonfanti Luca, Matricola: 894394
+; Pirovano Davide, Matricola:  
+
+
+;---------;---------;---------;---------;---------;---------;---------;
+; HASH TABLE IN COMMON LISP ;
+
+
+(defparameter *vertices* (make-hash-table :test #'equal))
+(defparameter *edges* (make-hash-table :test #'equal))
+(defparameter *graphs* (make-hash-table :test #'equal))
+(defparameter *visited* (make-hash-table :test #'equal))
+(defparameter *distances* (make-hash-table :test #'equal))
+(defparameter *previous* (make-hash-table :test #'equal))
+
+(defparameter *heaps* (make-hash-table :test #'equal))
+
+; parametri ausiliari
+(defparameter *lista* nil)
+(defparameter *testa-heap* nil)
+(defparameter *capacity-originale* nil)
+
+
+;---------;---------;---------;---------;---------;---------;---------;
+; INTERFACCIA COMMON LISP PER LA MANIPOLAZIONE DEI GRAFI ;
+
+(defun is-graph (graph-id)
+  (or 
+   (gethash 
+    graph-id
+    *graphs*)
+   nil))
+
+(defun new-graph (graph-id)
+  (or 
+   (is-graph
+    graph-id)
+   (setf 
+    (gethash 
+     graph-id 
+     *graphs*) 
+    graph-id)))
+
+; abbiamo utilizzato (declare (ignore v)) in quanto risultava unbound
+(defun delete-graph (graph-id)
+  (and 
+   (remhash
+    graph-id
+    *graphs*)
+   (maphash 
+    #'
+    (lambda (k v)
+      (declare
+       (ignore
+        v))
+      (if 
+          (equal 
+           (second
+            k)
+           graph-id)
+          (remhash
+           k
+           *vertices*)
+        T))
+    *vertices*)
+   (maphash 
+    #' 
+    (lambda (k v)
+      (declare
+       (ignore
+        v))
+      (if 
+          (equal 
+           (second
+            k)
+           graph-id)
+          (remhash
+           k
+           *edges*)
+        T))
+    *edges*)))
