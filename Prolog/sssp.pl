@@ -129,6 +129,14 @@ new_heap(H) :-
 new_heap(H) :-
     assert(heap(H, 0)), !.
 
+
+list_heap(H) :-
+    heap(H, _),
+    heap_size(H, Size),
+    ordering(H, Size),
+    listing(heap_entry(H, _, _, _)), !.
+
+
 delete_heap(H) :-
     retract(heap(H, _)),
     retractall(heap_entry(H, _, _, _)), !.
@@ -136,18 +144,22 @@ delete_heap(H) :-
 heap_size(H, S) :-
     heap(H, S), !.
 
+
 empty(H) :-
     heap(H, 0), !.
+
 
 not_empty(H) :-
     heap(H, _),
     heap_size(H, Size),
     Size > 0, !.
 
+
 head(H, K, V) :-
     heap(H, _),
     not_empty(H),
     heap_entry(H, 1, K, V), !.
+
 
 insert(H, K, V) :-
     heap(H, _),
@@ -172,7 +184,7 @@ insert(H, K, V) :-
     assert(heap_entry(H, Size, K, V)),
     go_up(H, Size), !.
 
-
+%min heapify
 go_up(_, 1) :- !.
 
 go_up(H, PC) :-
@@ -187,12 +199,125 @@ go_up(H, PC) :-
     swap(H, PF, PC),
     go_up(H, PF), !.
 
+
 extract(H, _, _) :-
     heap(H, _),
     heap(H, Size),
     Size < 1, !.
 
-% casi extract da aggiungere
+extract(H, K, V) :-
+    heap(H, _),
+    heap_entry(H, _, K, V),
+    heap_size(H, 1),
+    change_size(H, -1),
+    retract(heap_entry(H, _, K, V)), !.
+
+extract(H, K, V) :-
+    heap(H, _),
+    heap_entry(H, _, K, V),
+    head(H, K, V),
+    heap_size(H, Size),
+    change_size(H, -1),
+    retract(heap_entry(H, P, K, V)),
+    retract(heap_entry(H, Size, K1, V1)),
+    assert(heap_entry(H, P, K1, V1)),
+    heapify(H, 1), !.
+
+
+% nodo foglia
+heapify(H, PF) :-
+    heap_entry(H, PF, _, _),
+    heap_size(H, Size),
+    PC1 is PF * 2,
+    PC1 > Size, !.
+
+% figlio unico - figlio >= padre
+heapify(H, PF) :-
+    heap_entry(H, PF, KF, _),
+    heap_size(H, Size),
+    PC1 is PF * 2,
+    PC1 = Size,
+    heap_entry(H, PC1, KC1, _),
+    KC1 >= KF, !.
+
+% singolo figlio - figlio < padre
+heapify(H, PF) :-
+    heap_entry(H, PF, KF, _),
+    heap_size(H, Size),
+    PC1 is PF * 2,
+    PC1 = Size,
+    heap_entry(H, PC1, KC1, _),
+    KC1 < KF,
+    swap(H, PF, PC1),
+    heapify(H, PC1), !.
+
+% due figli - figli >= padre
+heapify(H, PF) :-
+    heap_entry(H, PF, KF, _),
+    PC1 is PF * 2,
+    heap_entry(H, PC1, KC1, _),
+    KC1 >= KF,
+    PC2 is PC1 + 1,
+    heap_entry(H, PC2, KC2, _),
+    KC2 >= KF, !.
+
+% due figli - figlio 1 >= padre e figlio 2 < padre
+heapify(H, PF) :-
+    heap_entry(H, PF, KF, _),
+    PC1 is PF * 2,
+    heap_entry(H, PC1, KC1, _),
+    KC1 >= KF,
+    PC2 is PC1 + 1,
+    heap_entry(H, PC2, KC2, _),
+    KC2 < KF,
+    swap(H, PF, PC2),
+    heapify(H, PC2), !.
+
+% due figli - figlio 1 < padre e figlio 2 >= padre
+heapify(H, PF) :-
+    heap_entry(H, PF, KF, _),
+    PC1 is PF * 2,
+    heap_entry(H, PC1, KC1, _),
+    KC1 < KF,
+    PC2 is PC1 + 1,
+    heap_entry(H, PC2, KC2, _),
+    KC2 >= KF,
+    swap(H, PF, PC1),
+    heapify(H, PC1), !.
+
+% due figli - figlio 1 < padre e figlio 2 < padre (figlio 1 =< figlio 2)
+heapify(H, PF) :-
+    heap_entry(H, PF, KF, _),
+    PC1 is PF * 2,
+    heap_entry(H, PC1, KC1, _),
+    KC1 < KF,
+    PC2 is PC1 + 1,
+    heap_entry(H, PC2, KC2, _),
+    KC2 < KF,
+    KC1 =< KC2,
+    swap(H, PF, PC1),
+    heapify(H, PC1), !.
+
+ % due figli - figlio 1 < padre e figlio 2 < padre (figlio 2 < figlio 1)
+heapify(H, PF) :-
+    heap_entry(H, PF, KF, _),
+    PC1 is PF * 2,
+    heap_entry(H, PC1, KC1, _),
+    KC1 < KF,
+    PC2 is PC1 + 1,
+    heap_entry(H, PC2, KC2, _),
+    KC2 < KF,
+    KC1 > KC2,
+    swap(H, PF, PC2),
+    heapify(H, PC2), !.
+
+
+swap(H, PF, PC) :-
+    retract(heap_entry(H, PF, KF, VF)),
+    retract(heap_entry(H, PC, KC, VC)),
+    assert(heap_entry(H, PF, KC, VC)),
+    assert(heap_entry(H, PC, KF, VF)).
+
 
 modify_key(H, NewKey, OldKey, V) :-
     heap(H, _),
@@ -202,11 +327,18 @@ modify_key(H, NewKey, OldKey, V) :-
     go_up(H, P),
     heapify(H, 1), !.
 
-list_heap(H) :-
+
+father(F, C) :-
+    F is floor(C / 2).
+
+
+change_size(H, A) :-
     heap(H, _),
-    heap_size(H, Size),
-    ordering(H, Size),
-    listing(heap_entry(H, _, _, _)), !.
+    heap(H, OldSize),
+    NewSize is OldSize + A,
+    retract(heap(H, OldSize)),
+    assert(heap(H, NewSize)).
+
 
 ordering(_, 0) :- !.
 
@@ -215,9 +347,3 @@ ordering(H, Size) :-
     asserta(heap_entry(H, Size, K, V)),
     S is Size - 1,
     ordering(H, S), !.
-
-swap(H, PF, PC) :-
-    retract(heap_entry(H, PF, KF, VF)),
-    retract(heap_entry(H, PC, KC, VC)),
-    assert(heap_entry(H, PF, KC, VC)),
-    assert(heap_entry(H, PC, KF, VF)).
