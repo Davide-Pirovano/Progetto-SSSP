@@ -142,8 +142,6 @@ change_previous(G, V, U) :-
     retractall(previous(G, V, _)),
     assert(previous(G, V, U)), !.
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 dijkstra_sssp(G, Source) :-
     graph(G),
     vertex(G, Source),
@@ -235,8 +233,6 @@ initialize_single_source(G, Source, Vs) :-
     assert(previous(G, T, not_defined)),
     insert(G, inf, T),
     initialize_single_source(G, Source, Ts), !.
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 shortest_path(G, Source, V, Path) :-
     graph(G),
