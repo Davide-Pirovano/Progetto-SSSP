@@ -395,7 +395,7 @@
     source-id
     (graph-vertices
      graph-id))
-   (internal-dijkstra
+   (dijkstra_algorithm
     graph-id
     source-id
     (graph-vertices
@@ -403,7 +403,7 @@
    (heap-delete
     graph-id)))
 
-(defun internal-dijkstra (graph-id vertex-id vertices)
+(defun dijkstra_algorithm (graph-id vertex-id vertices)
   (if
       (null
        vertices)
@@ -417,7 +417,7 @@
         vertex-id)
        *visited*)
       T)
-     (relax
+     (weight_update_control
       graph-id 
       vertex-id
       (graph-vertex-neighbors
@@ -425,7 +425,7 @@
        (second
         (heap-extract
          graph-id))))
-     (internal-dijkstra
+     (dijkstra_algorithm
       graph-id
       (second
        (heap-head
@@ -434,7 +434,7 @@
        vertex-id
        vertices)))))
 
-(defun relax (graph-id vertex-id neighbors)
+(defun weight_update_control (graph-id vertex-id neighbors)
   (cond
    ((null
      neighbors)
@@ -461,7 +461,7 @@
           (fourth
            (first
             neighbors))))
-        (relax
+        (weight_update_control
          graph-id
          vertex-id
          (cdr 
@@ -501,7 +501,7 @@
         (fourth
          (first
           neighbors)))
-       (relax
+       (weight_update_control
         graph-id
         vertex-id
         (cdr
@@ -524,7 +524,7 @@
           (third
            (first
             neighbors))))
-        (relax
+        (weight_update_control
          graph-id
          vertex-id
          (cdr
@@ -564,7 +564,7 @@
         (third
          (first
           neighbors)))
-       (relax
+       (weight_update_control
         graph-id
         vertex-id
         (cdr
