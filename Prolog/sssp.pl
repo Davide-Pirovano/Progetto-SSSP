@@ -80,21 +80,54 @@ list_graph(G) :-
     list_vertices(G),
     list_edges(G), !.
 
-% SSSP in Prolog DA-CONTROLLARE
+vertex_neighbors(G, V, VNs) :-
+    graph(G),
+    vertex(G, V),
+    findall(N, edge(G, V, N, W), Ns1),
+    findall(N, edge(G, N, V, W), Ns2),
+    append(Ns1, Ns2, Ns),
+    findall(T, visited(G, T), Ts),
+    remove_from_list(Ns, Ts, VNs).
+
+
+remove_from_list(Vs1, [], Vs1) :- !.
+
+remove_from_list(Vs1, Vs2, Vs) :-
+    Vs2 = [T | Ts],
+    member(T, Vs1),
+    delete(Vs1, T, Us),
+    remove_from_list(Us, Ts, Vs), !.
+
+remove_from_list(Vs1, Vs2, Vs) :-
+    Vs2 = [_ | Ts],
+    remove_from_list(Vs1, Ts, Vs), !.
+
+
+% SSSP in Prolog
 
 distance(G, V, D) :-
     graph(G),
     vertex(G, V),
     number(D), !.
 
+delete_distance(G) :-
+    graph(G),
+    retractall(dist(G, _, _)), !.
+
 visited(G, V) :-
     graph(G),
     vertex(G, V), !.
+
+delete_visited(G) :-
+    retractall(visited(G, _)), !.
 
 previous(G, V, U) :-
     graph(G),
     vertex(G, V),
     vertex(G, U), !.
+
+delete_previous(G) :-
+    retractall(previous(G, _, _)), !.
 
 change_distance(G, V, NewDist) :-
     graph(G),
@@ -109,17 +142,133 @@ change_previous(G, V, U) :-
     retractall(previous(G, V, _)),
     assert(previous(G, V, U)), !.
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 dijkstra_sssp(G, Source) :-
     graph(G),
     vertex(G, Source),
-    dijkstra(G, Source), !. %qui si costruisce l'albero dei cammini minimi con l'algo TO-DO
+    dijkstra(G, Source), !. %qui si costruisce l'albero dei cammini minimi
+
+dijkstra(G, Source) :-
+    new_heap(G),
+    % S <- vuoto
+    delete_distance(G),
+    delete_visited(G),
+    delete_previous(G),
+    % Q <- vertices(G)
+    vertices(G, Vs),
+    % initialize-single-source
+    initialize_single_source(G, Source, Vs),
+    % while Q non vuoto
+    dijkstra_algorithm(G, Vs),
+    delete_heap(G).
+
+dijkstra_algorithm(_, []) :- !.
+
+dijkstra_algorithm(G, Vs) :-
+    % do u <- extract-min(Q)
+    head(G, HK, HV),
+    delete(Vs, HV, Ts),
+    %Vs = [HV | Ts],
+    extract(G, HK, HV),
+    % S <- S U {u}
+    assert(visited(G, HV)),
+    %for each vertex v E Adj[v]
+    vertex_neighbors(G, HV, Ns),
+    %do weight update control(u, v, w)
+    weight_update_control(G, HV, Ns),
+    dijkstra_algorithm(G, Ts), !.
+
+weight_update_control(_, _, []) :- !.
+
+weight_update_control(G, V, Ns) :-
+    Ns = [T | Ts],
+    distance(G, V, DV),
+    distance(G, T, DN),
+    edge(G, V, T, W),
+    DN =< DV + W,
+    weight_update_control(G, V, Ts), !.
+
+weight_update_control(G, V, Ns) :-
+    Ns = [T | Ts],
+    distance(G, V, DV),
+    distance(G, T, DN),
+    edge(G, T, V, W),
+    DN =< DV + W,
+    weight_update_control(G, V, Ts), !.
+
+weight_update_control(G, V, Ns) :-
+    Ns = [T | Ts],
+    distance(G, V, DV),
+    edge(G, V, T, W),
+    NewDist is DV + W,
+    change_distance(G, T, NewDist),
+    change_previous(G, T, V),
+    heap_entry(G, _, OldKey, T),
+    modify_key(G, NewDist, OldKey, T),
+    weight_update_control(G, V, Ts), !.
+
+weight_update_control(G, V, Ns) :-
+    Ns = [T | Ts],
+    distance(G, V, DV),
+    edge(G, T, V, W),
+    NewDist is DV + W,
+    change_distance(G, T, NewDist),
+    change_previous(G, T, V),
+    heap_entry(G, _, OldKey, T),
+    modify_key(G, NewDist, OldKey, T),
+    weight_update_control(G, V, Ts), !.
+
+
+initialize_single_source(_, _, []) :- !.
+
+initialize_single_source(G, Source, Vs) :-
+    Vs = [Source | Ts],
+    vertex(G, Source),
+    assert(distance(G, Source, 0)),
+    insert(G, 0, Source),
+    initialize_single_source(G, Source, Ts), !.
+
+initialize_single_source(G, Source, Vs) :-
+    Vs = [T | Ts],
+    assert(distance(G, T, inf)),
+    assert(previous(G, T, not_defined)),
+    insert(G, inf, T),
+    initialize_single_source(G, Source, Ts), !.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 shortest_path(G, Source, V, Path) :-
     graph(G),
     vertex(G, Source),
     vertex(G, V),
     dijkstra_sssp(G, Source),
-    path_list(G, Source, V, Path), !. %stampa l'albero dei cammini minimi come lista TO-DO
+    path_list(G, Source, V, Path), !. %stampa l'albero dei cammini minimi come lista
+
+path_list(G, Source, V, Ps) :-
+    previous(G, V, Source),
+    edge(G, Source, V, W),
+    Ps = [edge(G, Source, V, W)], !.
+
+path_list(G, Source, V, Ps) :-
+    previous(G, V, Source),
+    edge(G, V, Source, W),
+    Ps = [edge(G, Source, V, W)], !.
+
+path_list(G, Source, V, Ps) :-
+    previous(G, V, U),
+    edge(G, U, V, W),
+    path_list(G, Source, U, Ps1),
+    append(Ps1, [edge(G, U, V, W)], Ps), !.
+
+path_list(G, Source, V, Ps) :-
+    previous(G, V, U),
+    edge(G, V, U, W),
+    path_list(G, Source, U, Ps1),
+    append(Ps1, [edge(G, U, V, W)], Ps), !.
+
+path_list(_, Source, V, _) :-
+    writef("Path does not exist from %w to %w.", [Source, V]), !.
 
 % MINHEAP in Prolog
 
@@ -347,3 +496,25 @@ ordering(H, Size) :-
     asserta(heap_entry(H, Size, K, V)),
     S is Size - 1,
     ordering(H, S), !.
+
+% Test
+
+test_1(G) :-
+    new_graph(G),
+    new_vertex(G, source),
+    new_vertex(G, a),
+    new_vertex(G, b),
+    new_vertex(G, c),
+    new_vertex(G, d),
+    new_vertex(G, e),
+    new_vertex(G, final),
+    new_edge(G, a, b, 6),
+    new_edge(G, source, a, 2),
+    new_edge(G, source, d, 8),
+    new_edge(G, a, c, 2),
+    new_edge(G, d, c, 2),
+    new_edge(G, d, e, 3),
+    new_edge(G, c, e, 9),
+    new_edge(G, e, final, 1),
+    new_edge(G, b, final, 5),
+    list_graph(G).
