@@ -1,8 +1,3 @@
-; -*- Mode: Common Lisp -*-
-; sssp.lisp
-
-
-;---------;---------;---------;---------;---------;---------;---------;
 ; SINGLE SOURCE SHORTEST PATH ;
 
 
@@ -12,7 +7,6 @@
 ; Pirovano Davide, Matricola:  
 
 
-;---------;---------;---------;---------;---------;---------;---------;
 ; HASH TABLE IN COMMON LISP ;
 
 
@@ -31,7 +25,7 @@
 (defparameter *capacity-originale* nil)
 
 
-;---------;---------;---------;---------;---------;---------;---------;
+
 ; INTERFACCIA COMMON LISP PER LA MANIPOLAZIONE DEI GRAFI ;
 
 (defun is-graph (graph-id)
@@ -53,7 +47,6 @@
 
 ; abbiamo utilizzato (declare (ignore v)) in quanto risultava unbound
 (defun delete-graph (graph-id)
-  (and 
    (remhash
     graph-id
     *graphs*)
@@ -88,7 +81,7 @@
            k
            *edges*)
         T))
-    *edges*)))
+    *edges*))
 
 (defun is-vertex (graph-id vertex-id)
   (or 
@@ -273,7 +266,7 @@
         v)))
     *edges*)))
 
-;---------;---------;---------;---------;---------;---------;---------;
+
 ; SSSP IN COMMON LISP ;
 
 (defun sssp-dist (graph-id vertex-id)
@@ -889,7 +882,7 @@
    *lista*))
 
 
-;---------;---------;---------;---------;---------;---------;---------;
+
 ; MINHEAP IN COMMON LISP ;
 
 
