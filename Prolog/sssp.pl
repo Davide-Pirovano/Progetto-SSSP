@@ -1,3 +1,6 @@
+%%%% <Pirovano> <Davide> <894632>
+%%%% <Collaborazione: <Bonfanti> <Luca> <894394>>
+
 % Dichiarazioni
 
 :- dynamic graph/1.
@@ -28,7 +31,8 @@ delete_graph(G) :-
 
 new_vertex(G, V) :-
     graph(G),
-    vertex(G, V), !.
+    vertex(G, V),
+    writef("Il vertice %w è già presente nel grafo %w.", [V, G]), !.
 
 new_vertex(G, V) :-
     graph(G),
@@ -241,6 +245,8 @@ shortest_path(G, Source, V, Path) :-
     dijkstra_sssp(G, Source),
     path_list(G, Source, V, Path), !. %stampa l'albero dei cammini minimi come lista
 
+path_list(G, Source, Source, [edge(G, Source, Source, 0)]).
+
 path_list(G, Source, V, Ps) :-
     previous(G, V, Source),
     edge(G, Source, V, W),
@@ -264,7 +270,7 @@ path_list(G, Source, V, Ps) :-
     append(Ps1, [edge(G, U, V, W)], Ps), !.
 
 path_list(_, Source, V, _) :-
-    writef("Path does not exist from %w to %w.", [Source, V]), !.
+    writef("Il percorso da %w a %w non esiste.", [Source, V]), !.
 
 % MINHEAP in Prolog
 
@@ -492,25 +498,3 @@ ordering(H, Size) :-
     asserta(heap_entry(H, Size, K, V)),
     S is Size - 1,
     ordering(H, S), !.
-
-% Test
-
-test_1(G) :-
-    new_graph(G),
-    new_vertex(G, source),
-    new_vertex(G, a),
-    new_vertex(G, b),
-    new_vertex(G, c),
-    new_vertex(G, d),
-    new_vertex(G, e),
-    new_vertex(G, final),
-    new_edge(G, a, b, 6),
-    new_edge(G, source, a, 2),
-    new_edge(G, source, d, 8),
-    new_edge(G, a, c, 2),
-    new_edge(G, d, c, 2),
-    new_edge(G, d, e, 3),
-    new_edge(G, c, e, 9),
-    new_edge(G, e, final, 1),
-    new_edge(G, b, final, 5),
-    list_graph(G).
