@@ -145,9 +145,6 @@ change_previous(G, V, U) :-
 dijkstra_sssp(G, Source) :-
     graph(G),
     vertex(G, Source),
-    delete_distance(G),
-    delete_visited(G),
-    delete_previous(G),
     dijkstra(G, Source), !. %qui si costruisce l'albero dei cammini minimi
 
 dijkstra(G, Source) :-
