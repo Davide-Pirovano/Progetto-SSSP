@@ -56,13 +56,30 @@ new_edge(G, U, V, Weight) :-
     graph(G),
     vertex(G, U),
     vertex(G, V),
-    edge(G, U, V, Weight), !.
+    edge(G, U, V, Weight),
+    writef("L'arco tra %w e %w è già presente nel grafo %w.", [U, V, G]), !.
 
 new_edge(G, U, V, Weight) :-
     graph(G),
     vertex(G, U),
     vertex(G, V),
+    edge(G, V, U, Weight),
+    writef("L'arco tra %w e %w è già presente nel grafo %w.", [U, V, G]), !.
+
+new_edge(G, U, V, Weight) :-
+    graph(G),
+    vertex(G, U),
+    vertex(G, V),
+    Weight >= 0,
     assert(edge(G, U, V, Weight)), !.
+
+new_edge(G, U, V, Weight) :-
+    graph(G),
+    vertex(G, U),
+    vertex(G, V),
+    Weight < 0,
+    writef("Il peso dell'arco deve essere positivo"), !.
+
 
 edges(G, Es) :-
     graph(G),
@@ -105,6 +122,25 @@ remove_from_list(Vs1, Vs2, Vs) :-
 remove_from_list(Vs1, Vs2, Vs) :-
     Vs2 = [_ | Ts],
     remove_from_list(Vs1, Ts, Vs), !.
+
+update_weight(G, V, U, NW) :-
+    graph(G),
+    vertex(G, V),
+    vertex(G, U),
+    edge(G, V, U, _),
+    NW >= 0,
+    retract(edge(G, V, U, _)),
+    assert(edge(G, V, U, NW)), !.
+
+update_weight(G, V, U, NW) :-
+    graph(G),
+    vertex(G, V),
+    vertex(G, U),
+    edge(G, U, V, _),
+    NW >= 0,
+    retract(edge(G, U, V, _)),
+    assert(edge(G, V, U, NW)), !.
+
 
 
 % SSSP in Prolog
