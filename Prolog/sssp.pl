@@ -18,7 +18,8 @@
 % Interfaccia Prolog per la manipolazione di grafi
 
 new_graph(G) :-
-    graph(G), !.
+    graph(G),
+    writef("Un grafo con tale nome esiste già"),!.
 
 new_graph(G) :-
     assert(graph(G)), !.
@@ -52,18 +53,11 @@ new_edge(G, U, V) :-
     vertex(V, U),
     new_edge(G, U, V, 1), !.
 
-new_edge(G, U, V, Weight) :-
+new_edge(G, U, V, _) :-
     graph(G),
     vertex(G, U),
     vertex(G, V),
-    edge(G, U, V, Weight),
-    writef("L'arco tra %w e %w è già presente nel grafo %w.", [U, V, G]), !.
-
-new_edge(G, U, V, Weight) :-
-    graph(G),
-    vertex(G, U),
-    vertex(G, V),
-    edge(G, V, U, Weight),
+    edge(G, U, V, _),
     writef("L'arco tra %w e %w è già presente nel grafo %w.", [U, V, G]), !.
 
 new_edge(G, U, V, Weight) :-
@@ -88,9 +82,7 @@ edges(G, Es) :-
 neighbors(G, V, Ns) :-
     graph(G),
     vertex(G, V),
-    findall(edge(G, V, N, W), edge(G, V, N, W), Ns1),
-    findall(edge(G, N, V, W), edge(G, N, V, W), Ns2),
-    append(Ns1, Ns2, Ns), !.
+    findall(edge(G, V, N, W), edge(G, V, N, W), Ns),!.
 
 list_edges(G) :-
     graph(G),
@@ -104,9 +96,7 @@ list_graph(G) :-
 vertex_neighbors(G, V, VNs) :-
     graph(G),
     vertex(G, V),
-    findall(N, edge(G, V, N, W), Ns1),
-    findall(N, edge(G, N, V, W), Ns2),
-    append(Ns1, Ns2, Ns),
+    findall(N, edge(G, V, N, _), Ns),
     findall(T, visited(G, T), Ts),
     remove_from_list(Ns, Ts, VNs).
 
@@ -131,16 +121,6 @@ update_weight(G, V, U, NW) :-
     NW >= 0,
     retract(edge(G, V, U, _)),
     assert(edge(G, V, U, NW)), !.
-
-update_weight(G, V, U, NW) :-
-    graph(G),
-    vertex(G, V),
-    vertex(G, U),
-    edge(G, U, V, _),
-    NW >= 0,
-    retract(edge(G, U, V, _)),
-    assert(edge(G, V, U, NW)), !.
-
 
 
 % SSSP in Prolog
@@ -185,7 +165,13 @@ change_previous(G, V, U) :-
 dijkstra_sssp(G, Source) :-
     graph(G),
     vertex(G, Source),
+    edge(G, Source, _, _),
     dijkstra(G, Source), !. %qui si costruisce l'albero dei cammini minimi
+
+dijkstra_sssp(G, Source) :-
+    graph(G),
+    vertex(G, Source),
+    writef("Non è possibile raggiungere alcun nodo da %w. ", [Source]), !.
 
 dijkstra(G, Source) :-
     new_heap(G),
@@ -230,14 +216,6 @@ weight_update_control(G, V, Ns) :-
 weight_update_control(G, V, Ns) :-
     Ns = [T | Ts],
     distance(G, V, DV),
-    distance(G, T, DN),
-    edge(G, T, V, W),
-    DN =< DV + W,
-    weight_update_control(G, V, Ts), !.
-
-weight_update_control(G, V, Ns) :-
-    Ns = [T | Ts],
-    distance(G, V, DV),
     edge(G, V, T, W),
     NewDist is DV + W,
     change_distance(G, T, NewDist),
@@ -245,18 +223,6 @@ weight_update_control(G, V, Ns) :-
     heap_entry(G, _, OldKey, T),
     modify_key(G, NewDist, OldKey, T),
     weight_update_control(G, V, Ts), !.
-
-weight_update_control(G, V, Ns) :-
-    Ns = [T | Ts],
-    distance(G, V, DV),
-    edge(G, T, V, W),
-    NewDist is DV + W,
-    change_distance(G, T, NewDist),
-    change_previous(G, T, V),
-    heap_entry(G, _, OldKey, T),
-    modify_key(G, NewDist, OldKey, T),
-    weight_update_control(G, V, Ts), !.
-
 
 initialize_single_source(_, _, []) :- !.
 
@@ -281,16 +247,9 @@ shortest_path(G, Source, V, Path) :-
     dijkstra_sssp(G, Source),
     path_list(G, Source, V, Path), !. %stampa l'albero dei cammini minimi come lista
 
-path_list(G, Source, Source, [edge(G, Source, Source, 0)]).
-
 path_list(G, Source, V, Ps) :-
     previous(G, V, Source),
     edge(G, Source, V, W),
-    Ps = [edge(G, Source, V, W)], !.
-
-path_list(G, Source, V, Ps) :-
-    previous(G, V, Source),
-    edge(G, V, Source, W),
     Ps = [edge(G, Source, V, W)], !.
 
 path_list(G, Source, V, Ps) :-
@@ -306,7 +265,7 @@ path_list(G, Source, V, Ps) :-
     append(Ps1, [edge(G, U, V, W)], Ps), !.
 
 path_list(_, Source, V, _) :-
-    writef("Il percorso da %w a %w non esiste.", [Source, V]), !.
+    writef("Il percorso %w -> %w non esiste.", [Source, V]), !.
 
 % MINHEAP in Prolog
 
