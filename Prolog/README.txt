@@ -1,8 +1,7 @@
 %%%% <Pirovano> <Davide> <894632>
 %%%% <Collaborazione: <Bonfanti> <Luca> <894394>>
 
-*** Abbiamo assunto che il costo del percorso da un vertice verso se stesso sia 0 a
-meno che sia specificato un arco che esprima il costo ***
+*** Abbiamo assunto che il costo del percorso da un vertice verso se stesso sia 0 ***
 
 % Interfaccia Prolog per la manipolazione di grafi
 
