@@ -47,7 +47,6 @@
 
 ; abbiamo utilizzato (declare (ignore v)) in quanto risultava unbound
 (defun delete-graph (graph-id)
-  (and 
    (remhash
     graph-id
     *graphs*)
@@ -82,7 +81,7 @@
            k
            *edges*)
         T))
-    *edges*)))
+    *edges*))
 
 (defun is-vertex (graph-id vertex-id)
   (or 

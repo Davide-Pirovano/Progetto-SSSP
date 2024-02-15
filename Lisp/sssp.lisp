@@ -47,10 +47,12 @@
 
 ; abbiamo utilizzato (declare (ignore v)) in quanto risultava unbound
 (defun delete-graph (graph-id)
+  (if (is-graph graph-id)
+      (and 
    (remhash
     graph-id
     *graphs*)
-   (maphash 
+   (or (maphash 
     #'
     (lambda (k v)
       (declare
@@ -81,7 +83,7 @@
            k
            *edges*)
         T))
-    *edges*))
+    *edges*)))))
 
 (defun is-vertex (graph-id vertex-id)
   (or 
@@ -219,25 +221,7 @@
          (append
           *lista*
           (list
-           v))))
-       ((and
-         (equal
-          (fourth
-           k)
-          vertex-id)
-         (not
-          (sssp-visited
-           graph-id
-           (third
-            k))))
-        (setq
-         *lista*
-         (append 
-          *lista*
-          (list 
-           v))))
-       (T
-        T)))                         
+           v))))))                         
     *edges*)
    *lista*))
 
