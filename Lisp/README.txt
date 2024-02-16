@@ -12,12 +12,12 @@
 Questa funzione ritorna il graph-id stesso se questo grafo è già stato creato,
 oppure NIL se no. 
 
-(new-graph graph-id) → graph-id 
+(new-graph graph-id) → graph-id
 Questa funzione genera un nuovo grafo e lo
 inserisce nel data base (ovvero nella hash-table) dei grafi. 
 
 (delete-graph graph-id) → NIL 
-Rimuove l’intero grafo dal sistema (vertici archi etc); ovvero rimuove tutte 
+Rimuove l’intero grafo dal sistema (vertici edgehi etc); ovvero rimuove tutte 
 le istanze presenti nei data base (ovvero nelle hash-tables) del sistema.
 
 (new-vertex graph-id vertex-id) → vertex-rep
@@ -25,38 +25,40 @@ Aggiunge un nuovo vertice vertex-id al grafo graph-id.
 Notate come la rappresentazione di un vertice associ un vertice ad un 
 grafo (o più). 
 
-(graph-vertices graph-id) → vertex-rep-list 
+(graph-vertices graph-id) → vertex-rep-list
 Questa funzione torna una lista di vertici del grafo.
 
-(new-arc graph-id vertex-id vertex-id &optional weight) → arc-rep 
-Questa funzione aggiunge un arco del grafo graph-id nella hash-table *arcs*. 
-La rappresentazione di un arco è
-(arc graph-id u v weight)
+(new-edge graph-id vertex-id vertex-id &optional weight) → edge-rep 
+Questa funzione aggiunge un edgeo del grafo graph-id nella hash-table *edges*. 
+La rappresentazione di un edge è
+(edge graph-id u v weight)
 
-(graph-arcs graph-id) → arc-rep-list 
-Questa funzione ritorna una lista una lista di tutti gli archi presenti 
+(graph-edges graph-id) → edge-rep-list 
+Questa funzione ritorna una lista una lista di tutti gli edgehi presenti 
 in graph-id.
 
 (graph-vertex-neighbors graph-id vertex-id) → vertex-rep-list 
-Questa funzione ritorna una lista vertex-rep-list contenente gli archi,
-(arc graph-id vertex-id N W), che portano ai vertici N immediatamente 
+Questa funzione ritorna una lista vertex-rep-list contenente gli edgehi,
+(edge graph-id vertex-id N W), che portano ai vertici N immediatamente 
 raggiungibili da vertex-id.
 
 (graph-print graph-id) 
 Questa funzione stampa alla console dell’interprete Common Lisp una lista
-dei vertici e degli archi del grafo graph-id.
+dei vertici e degli edgehi del grafo graph-id.
 
 ---- NON RICHIESTI DALLA CONSEGNA MA AGGIUNTI DA NOI ----
 
 (is-vertex graph-id vertex-id) → vertex-rep or NIL
 Questa funzione controlla se il vertex-id esiste ed appartiene al graph-id.
 
-(is-arc graph-id vertex-1-id vertex-2-id) → arc-rep or NIL
+(is-edge graph-id vertex-1-id vertex-2-id) → edge-rep or NIL
 Questa funzione controlla se il vertex-1-id esiste, se il vertex-2-id esiste
-e se appartengono al graph-id; poi trova, se esiste, l'arco che ha come nodi
+e se appartengono al graph-id; poi trova, se esiste, l'edgeo che ha come nodi
 la coppia (vertex-1-id, vertex-2-id), oppure (vertex-2-id, vertex-1-id).
 
-
+(change-edge-weight graph-id vertex-id vertex-id weight) → edge-rep
+Questa funzione permette di modificare il peso dell'arco tra i 2 vertici
+specificati del grafo, aggiornando la hashtable *edges*.
 
 ;---------;---------;---------;---------;---------;---------;---------;
 ; MINHEAP IN COMMON LISP ;
@@ -155,26 +157,21 @@ nella hash-table *dist* viene associato il valore new-dist.
 Questa funzione ha solo un effetto collaterale: alla chiave (graph-id V) 
 nella hash-table *previous* viene associato il valore U.
 
-(sssp graph-id source-id) → NIL 
+(sssp-dijkstra graph-id source-id) → NIL 
 Questa funzione termina con un effetto collaterale. Dopo la sua esecuzione,
 la hash-table *dist* contiene al suo interno le associazioni (graph-id V) ⇒ d
 per ogni V appartenente a graph-id; la hash-table *previous* contiene le
 associazioni (graph-id V) ⇒ U; infine la hash-table *visited* contiene le 
 associazioni (graph-id V) ⇒ {T, NIL}.
-N.B. sul pdf risulta che sssp accetti come parametro in input anche un 
-vertice V: quest'ultimo è stato rimosso in fase di implementazione in quanto
-non utile ai fini della funzione.
 
 (sssp-shortest-path G Source V) → Path 
-Questa funzione ritorna una lista di archi 
-((arc G Source N1 W1) 
-(arc G N1 N2 W2)
+Questa funzione ritorna una lista di edgehi 
+((edge G Source N1 W1) 
+(edge G N1 N2 W2)
  … 
-(arc G NK V Wk)) 
+(edge G NK V Wk)) 
 che rappresenta il “cammino minimo” da Source a V.
-N.B. sul pdf la funzione è definita come sss-shortest-path: 
-abbiamo deciso di rinominarla come sssp-shortest-path per simmetria 
-con le altre funzioni del sottocapitolo.
+
 
 ---- NON RICHIESTI DALLA CONSEGNA MA AGGIUNTI DA NOI ----
 
@@ -200,7 +197,7 @@ Per tutti gli altri vertici della lista vertices mette distanza 9999.
 Setta per tutti i vertici visited a NIL e i previous a 'not-defined. 
 N.B. Al posto di 9999 volevamo mettere infinito, non era fattibile, quindi 
 l'abbiamo sostituito con un valore abbastanza grande per i nostri 
-standard e test. Nel caso si abbiano pesi di archi sopra le migliaia si 
+standard e test. Nel caso si abbiano pesi di edgehi sopra le migliaia si 
 consiglia di modificare questo valore numerico con uno più grande.
 
 (internal-dijkstra graph-id vertex-id vertices) → T
@@ -209,14 +206,14 @@ di dijkstra in maniera ricorsiva.
 calcolo della testa, cancellazione dallo heap, inserimento nella 
 hash table *visited* e richiama relax.
 
-(relax graph-id vertex-id neighbors) → T
+(weight_update_control graph-id vertex-id neighbors) → T
 Questa funzione controlla se la distanza provvisoria del nodo dalla sorgente
-è minore rispetto alla somma tra vertice precedente e peso dell'arco arco e 
+è minore rispetto alla somma tra vertice precedente e peso dell'edgeo edgeo e 
 aggiunge la coppia chiave valore della minore nella hash table *dist*.
 
 (prov-dist graph-id vertex-1-id vertex-2-id) → d
 Questa funzione controlla se la distanza del vertex 2 dalla sorgente sommando 
-distanza vertex-1 al peso dell'arco tra vertex1 e vertex-2.
+distanza vertex-1 al peso dell'edgeo tra vertex1 e vertex-2.
 
 (find-old-key heap-id i value) → key
 Questa funzione, passata come parametro a modify-key all'interno di relax, 
@@ -229,5 +226,5 @@ prima volta che lo incontra.
 i tentativi con le funzioni delete e remove fornite da Lisp.
 
 (path-list graph-id source-id vertex-id) → lista
-Questa funzione restituisce la lista contenente gli archi che ripercorrono 
+Questa funzione restituisce la lista contenente gli edgehi che ripercorrono 
 il cammino minimo da vertex-id a source-id.
