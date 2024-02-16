@@ -3,7 +3,10 @@
 
 *** Abbiamo assunto che il costo del percorso da un vertice verso se stesso sia 0 ***
 
-% Interfaccia Prolog per la manipolazione di grafi
+
+
+%---------%---------%---------%---------%---------%---------%---------%
+% INTERFACCIA PROLOG PER LA MANIPOLAZIONE DEI GRAFI %
 
 :- new_graph(G).
 Questo predicato inserisce un nuovo grafo nella base-dati Prolog.
@@ -41,7 +44,8 @@ archi del grafo G.
 Questo predicato stampa alla console dell’interprete Prolog la lista dei 
 vertici e la lista degli archi del grafo G.
 
--- Non richiesti dalla consegna ma aggiunti da noi --
+
+---- NON RICHIESTI DALLA CONSEGNA MA AGGIUNTI DA NOI ----
 
 :- vertex_neighbors(G, V, VNs).
 Questo predicato controlla se G è un grafo e se V è un vertice di G, inserisce
@@ -59,7 +63,8 @@ se l'arco esiste già.
 
 
 
-% SSSP in Prolog
+%---------%---------%---------%---------%---------%---------%---------%
+% SSSP IN PROLOG %
 
 :- distance(G, V, D).
 Questo predicato è vero quando V è un vertice di G e, durante e dopo
@@ -100,7 +105,8 @@ Questo predicato è vero quando Path è una lista di archi
   edge(G, NK, V, WK)]
 che rappresenta il “cammino minimo” da Source a V.
 
--- Non richiesti dalla consegna ma aggiunti da noi --
+
+---- NON RICHIESTI DALLA CONSEGNA MA AGGIUNTI DA NOI ----
 
 :- dijkstra(G, Source).
 Questo predicato esegue le prime operazioni, necessarie per il funzionamento
@@ -143,7 +149,8 @@ nodo finale V.
 
 
 
-% MINHEAP in Prolog
+%---------%---------%---------%---------%---------%---------%---------%
+% MINHEAP IN PROLOG %
 
 :- new_heap(H).
 Questo predicato inserisce un nuovo heap nella base-dati Prolog.
@@ -186,7 +193,8 @@ la “heap property” per ogni nodo.
 Il predicato è vero quando la chiave OldKey 
 (associata al valore V) è sostituita da NewKey.
 
--- Non richiesti dalla consegna ma aggiunti da noi --
+
+---- NON RICHIESTI DALLA CONSEGNA MA AGGIUNTI DA NOI ----
 
 :- father(F, C).
 Il predicato controlla se F è genitore di C.
