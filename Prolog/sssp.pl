@@ -171,6 +171,9 @@ dijkstra_sssp(G, Source) :-
 dijkstra_sssp(G, Source) :-
     graph(G),
     vertex(G, Source),
+    delete_distance(G),
+    delete_visited(G),
+    delete_previous(G),
     writef("Non è possibile raggiungere alcun nodo da %w. ", [Source]), !.
 
 dijkstra(G, Source) :-
