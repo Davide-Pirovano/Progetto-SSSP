@@ -19,9 +19,11 @@
 
 new_graph(G) :-
     graph(G),
-    writef("Un grafo con tale nome esiste già"),!.
+    writef("Un grafo con tale nome esiste già"),
+    false, !.
 
 new_graph(G) :-
+    \+ graph(G),
     assert(graph(G)), !.
 
 delete_graph(G) :-
@@ -33,10 +35,12 @@ delete_graph(G) :-
 new_vertex(G, V) :-
     graph(G),
     vertex(G, V),
-    writef("Il vertice %w è già presente nel grafo %w.", [V, G]), !.
+    writef("Il vertice %w è già presente nel grafo %w.", [V, G]),
+    false, !.
 
 new_vertex(G, V) :-
     graph(G),
+    \+ vertex(G, V),
     assert(vertex(G, V)), !.
 
 vertices(G, Vs) :-
@@ -58,12 +62,14 @@ new_edge(G, U, V, _) :-
     vertex(G, U),
     vertex(G, V),
     edge(G, U, V, _),
-    writef("L'arco tra %w e %w è già presente nel grafo %w.", [U, V, G]), !.
+    writef("L'arco tra %w e %w è già presente nel grafo %w.", [U, V, G]),
+    false, !.
 
 new_edge(G, U, V, Weight) :-
     graph(G),
     vertex(G, U),
     vertex(G, V),
+    \+ edge(G, U, V, _),
     Weight >= 0,
     assert(edge(G, U, V, Weight)), !.
 
@@ -71,8 +77,10 @@ new_edge(G, U, V, Weight) :-
     graph(G),
     vertex(G, U),
     vertex(G, V),
+    \+ edge(G, U, V, _),
     Weight < 0,
-    writef("Il peso dell'arco deve essere positivo"), !.
+    writef("Il peso dell'arco deve essere positivo."),
+    false, !.
 
 
 edges(G, Es) :-
@@ -121,6 +129,22 @@ update_weight(G, V, U, NW) :-
     NW >= 0,
     retract(edge(G, V, U, _)),
     assert(edge(G, V, U, NW)), !.
+
+update_weight(G, V, U, NW) :-
+    graph(G),
+    vertex(G, V),
+    vertex(G, U),
+    edge(G, V, U, _),
+    NW < 0,
+    writef("Il peso deve essere positivo."),
+    false, !.
+
+
+update_weight(G, V, U, _) :-
+    graph(G),
+    \+ edge(G, V, U, _),
+    writef("Tale arco non esiste."),
+    false,!.
 
 
 % SSSP in Prolog
@@ -174,7 +198,8 @@ dijkstra_sssp(G, Source) :-
     delete_distance(G),
     delete_visited(G),
     delete_previous(G),
-    writef("Non è possibile raggiungere alcun nodo da %w. ", [Source]), !.
+    writef("Non è possibile raggiungere alcun nodo da %w. ", [Source]),
+    false, !.
 
 dijkstra(G, Source) :-
     new_heap(G),
@@ -247,7 +272,6 @@ shortest_path(G, Source, V, Path) :-
     graph(G),
     vertex(G, Source),
     vertex(G, V),
-    dijkstra_sssp(G, Source),
     path_list(G, Source, V, Path), !. %stampa l'albero dei cammini minimi come lista
 
 path_list(G, Source, V, Ps) :-
@@ -268,7 +292,8 @@ path_list(G, Source, V, Ps) :-
     append(Ps1, [edge(G, U, V, W)], Ps), !.
 
 path_list(_, Source, V, _) :-
-    writef("Il percorso %w -> %w non esiste.", [Source, V]), !.
+    writef("Il percorso %w -> %w non esiste.", [Source, V]),
+    false, !.
 
 % MINHEAP in Prolog
 
