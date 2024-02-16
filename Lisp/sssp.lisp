@@ -137,7 +137,6 @@
    *lista*))
 
 (defun is-edge (graph-id vertex-1-id vertex-2-id)
-  (or 
    (gethash
     (list
      'edge
@@ -145,14 +144,7 @@
      vertex-1-id
      vertex-2-id)
     *edges*)
-   (gethash
-    (list
-     'edge
-     graph-id
-     vertex-2-id
-     vertex-1-id)
-    *edges*)
-   nil))
+   )
 
 (defun new-edge (graph-id vertex-1-id vertex-2-id &optional (weight 1))
   (or
@@ -476,69 +468,6 @@
           (first
            neighbors)))
         (fourth
-         (first
-          neighbors)))
-       (weight_update_control
-        graph-id
-        vertex-id
-        (cdr
-         neighbors)))))
-   ;caso in cui arco ('arc G U V)
-   (T 
-    (if
-        (<=
-         (gethash
-          (list
-           'distance
-           graph-id
-           (third
-            (first
-             neighbors)))
-          *distances*)
-         (prov-dist
-          graph-id
-          vertex-id
-          (third
-           (first
-            neighbors))))
-        (weight_update_control
-         graph-id
-         vertex-id
-         (cdr
-          neighbors))
-      (and
-       (sssp-change-dist
-        graph-id
-        (third
-         (first
-          neighbors))
-        (prov-dist
-         graph-id
-         vertex-id
-         (third
-          (first
-           neighbors))))
-       (sssp-change-previous
-        graph-id
-        (third
-         (first
-          neighbors))
-        vertex-id)
-       (heap-modify-key
-        graph-id
-        (prov-dist
-         graph-id
-         vertex-id
-         (third
-          (first
-           neighbors)))
-        (find-old-key
-         graph-id
-         0
-         (third
-          (first
-           neighbors)))
-        (third
          (first
           neighbors)))
        (weight_update_control
