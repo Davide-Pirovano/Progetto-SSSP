@@ -4,7 +4,7 @@
 ; progetto a cura di:
 
 ; Bonfanti Luca, Matricola: 894394
-; Pirovano Davide, Matricola:  
+; Pirovano Davide, Matricola: 894632 
 
 
 ; HASH TABLE IN COMMON LISP ;
@@ -98,6 +98,7 @@
 
 
 (defun new-vertex (graph-id vertex-id)
+  (if (is-graph graph-id)
   (or
    (is-vertex
     graph-id
@@ -112,7 +113,7 @@
     (list
      'vertex
      graph-id
-     vertex-id))))
+     vertex-id)))))
 
 (defun graph-vertices (graph-id)
   (or 
@@ -147,11 +148,15 @@
    )
 
 (defun new-edge (graph-id vertex-1-id vertex-2-id &optional (weight 1))
+  (if (>= weight 0)
   (or
    (is-edge
     graph-id
     vertex-1-id
     vertex-2-id)
+   (if (and 
+        (is-vertex graph-id vertex-1-id) 
+        (is-vertex graph-id vertex-2-id))
    (setf
     (gethash
      (list
@@ -165,7 +170,19 @@
      graph-id
      vertex-1-id
      vertex-2-id
-     weight))))
+     weight))"errore vertici")"Il peso dell'arco deve essere positivo")))
+
+(defun change-edge-weight (graph-id vertex-1-id vertex-2-id weight)
+  (if (and 
+       (is-graph graph-id)
+       (>= weight 0)
+       (is-vertex graph-id vertex-1-id) 
+       (is-vertex graph-id vertex-2-id))
+      (setf 
+       (gethash 
+        (list 'edge graph-id vertex-1-id vertex-2-id) *edges*)
+            (list 'edge graph-id vertex-1-id vertex-2-id weight))
+))
 
 (defun graph-edges (graph-id)
   (or
@@ -681,7 +698,7 @@
       'not-defined)
      (and
       (print
-       "Path does not exist") 
+       "Percorso non esistente") 
       nil))
     ((equal
       source-id
@@ -884,7 +901,7 @@
          heap-id
          *heaps*))))
      (print
-      "Error: heap overflow"))
+      "Errore: heap overflow"))
     (T 
      (and
       (go-up 

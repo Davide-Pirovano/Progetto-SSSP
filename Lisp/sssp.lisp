@@ -675,14 +675,11 @@
 
 
 (defun sssp-shortest-path (graph-id source-id vertex-id) 
-  (or 
-   (sssp-dijkstra 
-    graph-id
-    source-id)
+  (or
    (path-list
     graph-id
     source-id
-    vertex-id)))
+    vertex-id) nil))
 
 
 (defun path-list (graph-id source-id vertex-id)
