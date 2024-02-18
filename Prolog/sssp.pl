@@ -19,7 +19,7 @@
 
 new_graph(G) :-
     graph(G),
-    writef("Un grafo con tale nome esiste già"),
+    writef("Un grafo con tale nome esiste già."),
     false, !.
 
 new_graph(G) :-
@@ -45,7 +45,7 @@ new_vertex(G, V) :-
 
 vertices(G, Vs) :-
     graph(G),
-    findall(V, vertex(G, V), Vs), !.
+    findall(vertex(G, V), vertex(G, V), Vs), !.
 
 list_vertices(G) :-
     graph(G),
