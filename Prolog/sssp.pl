@@ -62,7 +62,7 @@ new_edge(G, U, V, _) :-
     vertex(G, U),
     vertex(G, V),
     edge(G, U, V, _),
-    writef("L'arco tra %w e %w è già presente nel grafo %w.", [U, V, G]),
+    writef("Tale arco è già presente nel grafo."),
     false, !.
 
 new_edge(G, U, V, Weight) :-
@@ -190,7 +190,7 @@ dijkstra_sssp(G, Source) :-
     graph(G),
     vertex(G, Source),
     edge(G, Source, _, _),
-    dijkstra(G, Source), !. %qui si costruisce l'albero dei cammini minimi
+    dijkstra(G, Source), !. % costruisce l'albero dei cammini minimi
 
 dijkstra_sssp(G, Source) :-
     graph(G),
@@ -198,7 +198,7 @@ dijkstra_sssp(G, Source) :-
     delete_distance(G),
     delete_visited(G),
     delete_previous(G),
-    writef("Non è possibile raggiungere alcun nodo da %w. ", [Source]),
+    writef("Non è possibile raggiungere alcun nodo."),
     false, !.
 
 dijkstra(G, Source) :-
@@ -272,7 +272,7 @@ shortest_path(G, Source, V, Path) :-
     graph(G),
     vertex(G, Source),
     vertex(G, V),
-    path_list(G, Source, V, Path), !. %stampa l'albero dei cammini minimi come lista
+    path_list(G, Source, V, Path), !. %stampa albero cammini minimi
 
 path_list(G, Source, V, Ps) :-
     previous(G, V, Source),
@@ -459,7 +459,7 @@ heapify(H, PF) :-
     swap(H, PF, PC1),
     heapify(H, PC1), !.
 
-% due figli - figlio 1 < padre e figlio 2 < padre (figlio 1 =< figlio 2)
+% due figli - figlio1 < padre e figlio2 < padre (figlio1 =< figlio2)
 heapify(H, PF) :-
     heap_entry(H, PF, KF, _),
     PC1 is PF * 2,
@@ -472,7 +472,7 @@ heapify(H, PF) :-
     swap(H, PF, PC1),
     heapify(H, PC1), !.
 
- % due figli - figlio 1 < padre e figlio 2 < padre (figlio 2 < figlio 1)
+ % due figli - figlio1 < padre e figlio2 < padre (figlio2 < figlio1)
 heapify(H, PF) :-
     heap_entry(H, PF, KF, _),
     PC1 is PF * 2,
