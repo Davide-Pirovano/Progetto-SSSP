@@ -243,7 +243,18 @@ weight_update_control(G, V, Ns) :-
     Ns = [T | Ts],
     distance(G, V, DV),
     distance(G, T, DN),
+    edge(G, V, T, _),
+    DV = inf,
+    DN = inf,
+    weight_update_control(G, V, Ts), !.
+
+
+weight_update_control(G, V, Ns) :-
+    Ns = [T | Ts],
+    distance(G, V, DV),
+    distance(G, T, DN),
     edge(G, V, T, W),
+    DV \= inf,
     DN =< DV + W,
     weight_update_control(G, V, Ts), !.
 
