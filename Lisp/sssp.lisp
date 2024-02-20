@@ -36,9 +36,11 @@
    nil))
 
 (defun new-graph (graph-id)
-  (or 
+  (if 
    (is-graph
     graph-id)
+   (format t "Errore: Un grafo con tale nome esiste giï¿½."
+    nil)
    (setf 
     (gethash 
      graph-id 
@@ -83,7 +85,8 @@
            k
            *edges*)
         T))
-    *edges*)))))
+    *edges*)))(format t "Errore: grafo non esistente."
+    nil) ))
 
 (defun is-vertex (graph-id vertex-id)
   (or 
@@ -99,10 +102,12 @@
 
 (defun new-vertex (graph-id vertex-id)
   (if (is-graph graph-id)
-  (or
+  (if
    (is-vertex
     graph-id
     vertex-id)
+   (format t "Errore: Il vertice ï¿½ giï¿½ presente nel grafo.."
+    nil)
    (setf
     (gethash
      (list
@@ -149,11 +154,13 @@
 
 (defun new-edge (graph-id vertex-1-id vertex-2-id &optional (weight 1))
   (if (>= weight 0)
-  (or
+  (if
    (is-edge
     graph-id
     vertex-1-id
     vertex-2-id)
+   (format t "Errore: Tale arco ï¿½ giï¿½ presente nel grafo."
+    nil)
    (if (and 
         (is-vertex graph-id vertex-1-id) 
         (is-vertex graph-id vertex-2-id))
@@ -170,19 +177,27 @@
      graph-id
      vertex-1-id
      vertex-2-id
-     weight))"errore vertici")"Il peso dell'arco deve essere positivo")))
+     weight)) 
+     (format t "Errore: vertici non corretti."
+    nil) ))
+    (format t "Errore: Il peso dell'arco deve essere positivo."
+    nil)) )
 
 (defun change-edge-weight (graph-id vertex-1-id vertex-2-id weight)
-  (if (and 
-       (is-graph graph-id)
-       (>= weight 0)
-       (is-vertex graph-id vertex-1-id) 
-       (is-vertex graph-id vertex-2-id))
+  (if (is-edge graph-id vertex-1-id vertex-2-id)
+      (if (>= weight 0)
+          (if (and
+               (is-graph graph-id)
+               (is-vertex graph-id vertex-1-id)
+               (is-vertex graph-id vertex-2-id))
       (setf 
        (gethash 
         (list 'edge graph-id vertex-1-id vertex-2-id) *edges*)
-            (list 'edge graph-id vertex-1-id vertex-2-id weight))
-))
+            (list 'edge graph-id vertex-1-id vertex-2-id weight)))
+        (format t "Errore: Il peso deve essere positivo."
+            nil))
+    (format t "Errore: Tale arco non esiste."
+            nil)))
 
 (defun graph-edges (graph-id)
   (or
@@ -215,6 +230,28 @@
     #' 
     (lambda (k v)
       (cond 
+       ((equal 
+          (third 
+           k) 
+          vertex-id)
+        (setq
+         *lista*
+         (append
+          *lista*
+          (list
+           v))))))                         
+    *edges*)
+   *lista*))
+
+(defun not-visited-neighbors (graph-id vertex-id)
+  (or 
+   (setq 
+    *lista*
+    nil)
+   (maphash 
+    #' 
+    (lambda (k v)
+      (cond 
        ((and 
          (equal 
           (third 
@@ -235,6 +272,7 @@
    *lista*))
 
 (defun graph-print (graph-id)
+  (if (is-graph graph-id)
   (or 
    (maphash 
     #' 
@@ -257,7 +295,7 @@
         graph-id)
        (print
         v)))
-    *edges*)))
+    *edges*)T) nil))
 
 
 ; SSSP IN COMMON LISP ;
@@ -360,11 +398,14 @@
 
 
 (defun sssp-dijkstra (graph-id source-id)
-  (and
-   (dijkstra
-    graph-id
-    source-id)
-   nil))
+  (if (graph-vertex-neighbors graph-id source-id)
+      (and
+       (dijkstra
+        graph-id
+        source-id)
+       nil)
+    (format t "Errore: Non ï¿½ possibile raggiungere alcun nodo."
+    nil)))
 
 (defun dijkstra (graph-id source-id)
   (and 
@@ -406,7 +447,7 @@
      (weight_update_control
       graph-id 
       vertex-id
-      (graph-vertex-neighbors
+      (not-visited-neighbors
        graph-id
        (second
         (heap-extract
@@ -567,7 +608,7 @@
         1)
        value))))
 
-;implementata perchè remove non dava i risultati aspettati
+;implementata perchï¿½ remove non dava i risultati aspettati
 (defun remove-from-list (vertex-id list)
   (cond 
    ((null 
@@ -674,7 +715,7 @@
        vertices))))))
 
 
-(defun sssp-shortest-path (graph-id source-id vertex-id) 
+(defun sssp-shortest-path (graph-id source-id vertex-id)
   (or
    (path-list
     graph-id
