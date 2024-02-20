@@ -23,7 +23,7 @@ Il vertice V è già presente nel grafo G.
 
 :- vertices (G, Vs).
 Questo predicato è vero quando Vs è una lista contenente tutti
-i vertici di G.
+i vertici di G, formato-lista: [vertex(g, a), vertex(g, b), ...].
 
 :- list_vertices(G).
 Questo predicato stampa alla console dell’interprete Prolog la lista
@@ -51,6 +51,10 @@ dei vertici e la lista degli archi del grafo G.
 
 
 ---- NON RICHIESTI DALLA CONSEGNA MA AGGIUNTI DA NOI ----
+
+:- vertices_list (G, Vs).
+Questo predicato è vero quando Vs è una lista contenente tutti
+i vertici di G, formato-lista: [a, b, c, ...].
 
 :- vertex_neighbors(G, V, VNs).
 Questo predicato controlla se G è un grafo e se V è un vertice di G,

@@ -47,6 +47,11 @@ vertices(G, Vs) :-
     graph(G),
     findall(vertex(G, V), vertex(G, V), Vs), !.
 
+vertices_list(G, Vs) :-
+    graph(G),
+    findall(V, vertex(G, V), Vs), !.
+
+
 list_vertices(G) :-
     graph(G),
     listing(vertex(G, _)), !.
@@ -195,6 +200,7 @@ dijkstra_sssp(G, Source) :-
 dijkstra_sssp(G, Source) :-
     graph(G),
     vertex(G, Source),
+    \+ edge(G, Source, _, _),
     delete_distance(G),
     delete_visited(G),
     delete_previous(G),
@@ -208,7 +214,7 @@ dijkstra(G, Source) :-
     delete_visited(G),
     delete_previous(G),
     % Q <- vertices(G)
-    vertices(G, Vs),
+    vertices_list(G, Vs),
     % initialize-single-source
     initialize_single_source(G, Source, Vs),
     % while Q non vuoto

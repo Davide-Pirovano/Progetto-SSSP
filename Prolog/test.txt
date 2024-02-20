@@ -1,0 +1,29 @@
+new_graph(g),
+new_vertex(g, a),
+new_vertex(g, b),
+new_vertex(g, c),
+new_vertex(g, d),
+new_vertex(g, e),
+new_vertex(g, f),
+new_vertex(g, g),
+new_vertex(g, h),
+new_edge(g, a, b, 2),
+new_edge(g, a, c, 1),
+new_edge(g, a, d, 1),
+new_edge(g, b, f, 3),
+new_edge(g, c, e, 1),
+new_edge(g, d, g, 4),
+new_edge(g, e, f, 1),
+new_edge(g, e, h, 5),
+new_edge(g, e, g, 2),
+new_edge(g, f, h, 1),
+new_edge(g, g, h, 1),
+list_graph(g).
+
+* TEST ERRORE*
+new_graph(g).
+new_vertex(g, a).
+new_edge(g, a, b, 3).
+new_edge(g, a, h, 2).
+update_weight(g, a, b, -1).
+shortest_path(g, a, h, P).
