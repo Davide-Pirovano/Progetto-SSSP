@@ -3,8 +3,8 @@
 
 ; progetto a cura di:
 
-; Bonfanti Luca, Matricola: 894394
-; Pirovano Davide, Matricola: 894632 
+;; <Pirovano> <Davide> <894632>
+;; <Collaborazione: <Bonfanti> <Luca> <894394>>
 
 
 ; HASH TABLE IN COMMON LISP ;
