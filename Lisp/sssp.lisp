@@ -39,7 +39,7 @@
   (if 
    (is-graph
     graph-id)
-   (format t "Errore: Un grafo con tale nome esiste giï¿½."
+   (format t "Errore: Un grafo con tale nome esiste già."
     nil)
    (setf 
     (gethash 
@@ -106,7 +106,7 @@
    (is-vertex
     graph-id
     vertex-id)
-   (format t "Errore: Il vertice ï¿½ giï¿½ presente nel grafo.."
+   (format t "Errore: Il vertice e gia presente nel grafo.."
     nil)
    (setf
     (gethash
@@ -159,7 +159,7 @@
     graph-id
     vertex-1-id
     vertex-2-id)
-   (format t "Errore: Tale arco ï¿½ giï¿½ presente nel grafo."
+   (format t "Errore: Tale arco è già presente nel grafo."
     nil)
    (if (and 
         (is-vertex graph-id vertex-1-id) 
@@ -404,7 +404,7 @@
         graph-id
         source-id)
        nil)
-    (format t "Errore: Non ï¿½ possibile raggiungere alcun nodo."
+    (format t "Errore: Non è possibile raggiungere alcun nodo."
     nil)))
 
 (defun dijkstra (graph-id source-id)
@@ -608,7 +608,7 @@
         1)
        value))))
 
-;implementata perchï¿½ remove non dava i risultati aspettati
+;implementata perchè remove non dava i risultati aspettati
 (defun remove-from-list (vertex-id list)
   (cond 
    ((null 
