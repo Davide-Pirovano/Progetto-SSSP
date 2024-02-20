@@ -4,6 +4,38 @@
 *** Abbiamo assunto che il costo del percorso da un vertice
 verso se stesso sia 0 ***
 
+Gestione Errori:
+Quando si verifica un errore il programma restituisce
+l'errore e fallisce.
+
+Errori Gestiti:
+1. Creazione di un nuovo grafo con un nome di un grafo già
+   presente nella base di dati.
+	Errore: Un grafo con tale nome esiste già.
+
+2. Creazione di un vertice con un nome di un vertice già
+   presente nella base di dati.
+	Errore: Il vertice %w è già presente nel grafo %w.
+
+3. Creazione di un arco tra due vertici già presente nella
+   base di dati.
+	Errore: Tale arco è già presente nel grafo.
+
+4. Creazione di un arco tra due vertici con peso negativo.
+	Errore: Il peso dell'arco deve essere positivo.
+
+5. Aggiornamento del peso di un arco con un nuovo peso negativo.
+	Errore: Il peso deve essere positivo.
+
+6. Aggiornamento del peso di un arco, ma tale arco non esiste
+   nella base di dati.
+	Errore: Tale arco non esiste.
+
+7. Esecuzione dijkstra_sssp su un vertice che non ha vicini.
+	Errore: Non è possibile raggiungere alcun nodo.
+
+8. Esecuzione shortest_path senza aver eseguito dijkstra_sssp
+   in precedenza.
 
 
 %---------%---------%---------%---------%---------%---------%------%

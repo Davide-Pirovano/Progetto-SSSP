@@ -24,6 +24,6 @@ list_graph(g).
 new_graph(g).
 new_vertex(g, a).
 new_edge(g, a, b, 3).
-new_edge(g, a, h, 2).
+new_edge(g, a, k, 2).
 update_weight(g, a, b, -1).
 shortest_path(g, a, h, P).
