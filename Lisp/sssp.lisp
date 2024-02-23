@@ -681,7 +681,7 @@
     (and
      (heap-insert
       graph-id
-      9999
+      MOST-POSITIVE-DOUBLE-FLOAT
       (third
        (first
         vertices)))
@@ -690,7 +690,7 @@
       (third
        (first
         vertices))
-      9999)
+      MOST-POSITIVE-DOUBLE-FLOAT)
      (not
       (setf
        (gethash 

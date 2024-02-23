@@ -150,12 +150,10 @@ e internal-dijkstra.
 (initialize-single-source graph-id source-id vertices) → T
 Questa funzione imposta la source-id come effettiva sorgente da cui 
 calcolare le distanze, imposta la distanza della sorgente a 0. 
-Per tutti gli altri vertici della lista vertices mette distanza 9999.
+Per tutti gli altri vertici della lista vertices mette distanza 
+MOST-POSITIVE-DOUBLE-FLOAT.
 Setta per tutti i vertici visited a NIL e i previous a 'not-defined. 
-N.B. Al posto di 9999 volevamo mettere infinito, non era fattibile, quindi 
-l'abbiamo sostituito con un valore abbastanza grande per i nostri 
-standard e test. Nel caso si abbiano pesi di edge sopra le migliaia si 
-consiglia di modificare questo valore numerico con uno più grande.
+
 
 (internal-dijkstra graph-id vertex-id vertices) → T
 Questa funzione esegue effettivamente la parte operativa dell'algoritmo 
