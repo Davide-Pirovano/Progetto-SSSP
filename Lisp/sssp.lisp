@@ -1,6 +1,3 @@
-; SINGLE SOURCE SHORTEST PATH ;
-
-
 ; progetto a cura di:
 
 ;; <Bonfanti> <Luca> <894394>
@@ -182,21 +179,6 @@
     (format t "Errore: Il peso dell'arco deve essere positivo."
     nil)) )
 
-(defun change-edge-weight (graph-id vertex-1-id vertex-2-id weight)
-  (if (is-edge graph-id vertex-1-id vertex-2-id)
-      (if (>= weight 0)
-          (if (and
-               (is-graph graph-id)
-               (is-vertex graph-id vertex-1-id)
-               (is-vertex graph-id vertex-2-id))
-      (setf 
-       (gethash 
-        (list 'edge graph-id vertex-1-id vertex-2-id) *edges*)
-            (list 'edge graph-id vertex-1-id vertex-2-id weight)))
-        (format t "Errore: Il peso deve essere positivo."
-            nil))
-    (format t "Errore: Tale arco non esiste."
-            nil)))
 
 (defun graph-edges (graph-id)
   (or
@@ -723,11 +705,32 @@
 
 
 (defun sssp-shortest-path (graph-id source-id vertex-id)
+  (if (previous-exist graph-id source-id vertex-id )
   (or
    (path-list
     graph-id
     source-id
-    vertex-id) nil))
+    vertex-id) nil)))
+
+(defun previous-exist (graph-id source-id vertex-id)
+  (if (and (not(equal vertex-id nil))
+           (not(equal vertex-id source-id)))
+  (if (or (equal
+      (sssp-previous
+       graph-id
+       vertex-id)
+      'not-defined)
+          (equal
+      (sssp-previous
+       graph-id
+       vertex-id)
+      nil))
+      nil
+    (previous-exist graph-id source-id 
+                    (sssp-previous
+                     graph-id vertex-id))
+                                       
+) T) )
 
 
 (defun path-list (graph-id source-id vertex-id)

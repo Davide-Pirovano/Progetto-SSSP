@@ -1,6 +1,7 @@
 ;; <Pirovano> <Davide> <894632>
 ;; <Collaborazione: <Bonfanti> <Luca> <894394>>
 
+
 *** Abbiamo assunto che il costo del percorso da un vertice verso se stesso
 sia 0 ***
 
@@ -84,9 +85,6 @@ Questa funzione ritorna una lista vertex-rep-list contenente gli edges non
 visitati,(edge graph-id vertex-id N W), che portano ai vertici N
 immediatamente raggiungibili da vertex-id.
 
-(change-edge-weight graph-id vertex-id vertex-id weight) → edge-rep
-Questa funzione permette di modificare il peso dell'arco tra i 2 vertici
-specificati del grafo, aggiornando la hashtable *edges*.
 
 
 ;---------;---------;---------;---------;---------;---------;---------;
@@ -184,6 +182,11 @@ volte i tentativi con le funzioni delete e remove fornite da Lisp.
 Questa funzione restituisce la lista contenente gli edges che ripercorrono
 il cammino minimo da vertex-id a source-id.
 
+(previous-exist graph-id source-id vertex-id) → bool
+Questa funzione controlla se esistono tutti i vertici precedenti nel cammino
+per verificare se il nodo sorgente sia diverso da quello su cui si 
+è eseguito sssp-dijkstra.
+
 ;---------;---------;---------;---------;---------;---------;---------;
 ; MINHEAP IN COMMON LISP ;
 
@@ -254,5 +257,4 @@ dello heap heap-id.
 (array-print heap-id i) → T
 Questa funzione stampa a schermo tutti gli elementi dell'array
 dello heap heap-id.
-
 
