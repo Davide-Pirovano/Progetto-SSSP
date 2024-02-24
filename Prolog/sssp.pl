@@ -264,27 +264,30 @@ shortest_path(G, Source, V, Path) :-
     graph(G),
     vertex(G, Source),
     vertex(G, V),
-    path_list(G, Source, V, Path), !. %stampa albero cammini minimi
+    path_list(G, Source, V, Path, Source, V), !. %stampa albero cammini minimi
 
-path_list(G, Source, V, Ps) :-
+path_list(G, Source, V, Ps, _, _) :-
     previous(G, V, Source),
     edge(G, Source, V, W),
     Ps = [edge(G, Source, V, W)], !.
 
-path_list(G, Source, V, Ps) :-
+path_list(G, Source, V, Ps, OS, OD) :-
     previous(G, V, U),
     edge(G, U, V, W),
-    path_list(G, Source, U, Ps1),
+    path_list(G, Source, U, Ps1, OS, OD),
     append(Ps1, [edge(G, U, V, W)], Ps), !.
 
-path_list(G, Source, V, Ps) :-
+path_list(G, Source, V, Ps, OS, OD) :-
     previous(G, V, U),
     edge(G, V, U, W),
-    path_list(G, Source, U, Ps1),
+    path_list(G, Source, U, Ps1, OS, OD),
     append(Ps1, [edge(G, U, V, W)], Ps), !.
 
-path_list(_, Source, V, _) :-
+path_list(_, Source, V, _, OS, OD) :-
+    Source = OS,
+    V = OD,
     writef("Il percorso %w -> %w non esiste.", [Source, V]),
+    nl,
     false, !.
 
 % MINHEAP in Prolog
