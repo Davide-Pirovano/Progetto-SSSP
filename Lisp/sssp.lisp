@@ -3,9 +3,8 @@
 
 ; progetto a cura di:
 
-;; <Pirovano> <Davide> <894632>
-;; <Collaborazione: <Bonfanti> <Luca> <894394>>
-
+;; <Bonfanti> <Luca> <894394>
+;; <Collaborazione: <Pirovano> <Davide> <894632>>
 
 ; HASH TABLE IN COMMON LISP ;
 
@@ -230,10 +229,14 @@
     #' 
     (lambda (k v)
       (cond 
-       ((equal 
+       ((and (equal 
           (third 
            k) 
           vertex-id)
+             (equal
+              (second
+               k)
+              graph-id))
         (setq
          *lista*
          (append
@@ -261,7 +264,11 @@
           (sssp-visited
            graph-id
            (fourth
-            k))))
+            k))) 
+         (equal
+              (second
+               k)
+              graph-id)) 
         (setq
          *lista*
          (append
