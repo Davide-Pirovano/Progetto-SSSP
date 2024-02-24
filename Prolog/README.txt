@@ -99,10 +99,6 @@ Questo predicato rimuove gli elementi della lista Vs2 dalla lista
 Vs1, e restituisce il tutto in Vs, viene richiamato in
 vertex_neighbors.
 
-:- update_weight(G, V, U, NW).
-Questo predicato permette di aggiornare il peso di un arco del
-grafo, ovviamente se l'arco esiste già.
-
 
 
 %---------%---------%---------%---------%---------%---------%------%

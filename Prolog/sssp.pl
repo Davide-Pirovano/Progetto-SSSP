@@ -126,31 +126,6 @@ remove_from_list(Vs1, Vs2, Vs) :-
     Vs2 = [_ | Ts],
     remove_from_list(Vs1, Ts, Vs), !.
 
-update_weight(G, V, U, NW) :-
-    graph(G),
-    vertex(G, V),
-    vertex(G, U),
-    edge(G, V, U, _),
-    NW >= 0,
-    retract(edge(G, V, U, _)),
-    assert(edge(G, V, U, NW)), !.
-
-update_weight(G, V, U, NW) :-
-    graph(G),
-    vertex(G, V),
-    vertex(G, U),
-    edge(G, V, U, _),
-    NW < 0,
-    writef("Il peso deve essere positivo."),
-    false, !.
-
-
-update_weight(G, V, U, _) :-
-    graph(G),
-    \+ edge(G, V, U, _),
-    writef("Tale arco non esiste."),
-    false,!.
-
 
 % SSSP in Prolog
 
